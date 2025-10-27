@@ -33,6 +33,12 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('company_id')->nullable()->references('id')->on('company'); // clé etragere
             // $table->foreignId('vehicles_idnullable()->constrained()->nullOnDelete();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
         });
     }
 

@@ -53,7 +53,6 @@ Route::patch('/favorisUpdate/{id}', [FavorisController::class, 'updateFavoris'])
 Route::post('/addFavoris', [FavorisController::class, 'addFavoris']);
 Route::delete('/deleteFavoris/{id}', [FavorisController::class, 'deleteFavoris']);
 
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
