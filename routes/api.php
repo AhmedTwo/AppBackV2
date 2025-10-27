@@ -49,7 +49,6 @@ Route::delete('/deleteRequest/{id}', [RequestController::class, 'deleteRequest']
 
 Route::get('/allFavoris', [FavorisController::class, 'getFavoris']);
 Route::get('/favorisById/{id}', [FavorisController::class, 'getFavorisById']);
-Route::patch('/favorisUpdate/{id}', [FavorisController::class, 'updateFavoris']);
 Route::post('/addFavoris', [FavorisController::class, 'addFavoris']);
 Route::delete('/deleteFavoris/{id}', [FavorisController::class, 'deleteFavoris']);
 
