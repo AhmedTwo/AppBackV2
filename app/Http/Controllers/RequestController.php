@@ -49,70 +49,81 @@ class RequestController extends Controller
 
     public function updateRequest(Request $requestParam, $id)
     {
-
         $request = RequestModel::find($id);
 
         if (!$request) {
-
             return response()->json([
                 'success' => false,
-                'message' => 'Demande non trouvé',
+                'message' => 'Demande non trouvée.',
             ], 404);
         }
 
-        $vaildatedData = $requestParam->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'string|max:2000',
-            'type' => 'required|string|max:255',
+        $validatedData = $requestParam->validate([
+            'title'       => 'sometimes|string|max:255',
+            'description' => 'sometimes|string|max:2000',
+            'type'        => 'sometimes|string|max:255|in:RECLAMATION,DEMANDES,SUPPRESSION,MODIFICATION',
         ], [
-            'title.required'    => 'Le titre est obligatoire.',
-            'title.max'         => 'Le titre ne peut pas dépasser 255 caractères.',
-            'description.max'   => 'La description ne peut pas dépasser 2000 caractères.',
-            'type.required' => 'Le type doit soit être RECLAMATION, DEMANDES, SUPPRESION ou MODIFICATION',
+            'title.string'       => 'Le titre doit être une chaîne de caractères.',
+            'title.max'          => 'Le titre ne peut pas dépasser 255 caractères.',
+            'description.string' => 'La description doit être une chaîne de caractères.',
+            'description.max'    => 'La description ne peut pas dépasser 2000 caractères.',
+            'type.string'        => 'Le type doit être une chaîne de caractères.',
+            'type.in'            => 'Le type doit être l\'une des valeurs suivantes : RECLAMATION, DEMANDES, SUPPRESSION ou MODIFICATION.',
         ]);
 
-        $request->update($vaildatedData);
+        $request->update($validatedData);
 
         return response()->json([
             'success' => true,
-            'message' => 'Demandes trouvée et mis à jour avec succès',
-            'data' => $request, // request màj
+            'message' => 'Demande mise à jour avec succès.',
+            'data'    => $request,
         ], 200);
     }
 
     public function addRequest(Request $requestParam)
     {
         $validatedData = $requestParam->validate([
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'required|string|max:2000',
-            'type' => 'required|string|max:255|in:RECLAMATION,DEMANDES,SUPPRESION,MODIFICATION',
-            'user_id'      => 'sometimes|integer|exists:users,id',
-            'company_id'   => 'sometimes|integer|exists:companys,id'
+            'type'        => 'required|string|max:255|in:RECLAMATION,DEMANDES,SUPPRESSION,MODIFICATION',
+            'user_id'     => 'nullable|integer|exists:users,id|required_without:company_id',
+            'company_id'  => 'nullable|integer|exists:companys,id|required_without:user_id',
+            // forcer au moins un des deux : → ajouter required_without et la colonne en question
         ], [
-            'title.required'    => 'Le titre est obligatoire.',
-            'title.max'         => 'Le titre ne peut pas dépasser 255 caractères.',
-            'description.max'   => 'La description ne peut pas dépasser 2000 caractères.',
-            'type.in' => 'Le type doit être l\'une des valeurs suivantes : RECLAMATION, DEMANDES, SUPPRESION ou MODIFICATION.'
+            'title.required'       => 'Le titre est obligatoire.',
+            'title.string'         => 'Le titre doit être une chaîne de caractères.',
+            'title.max'            => 'Le titre ne peut pas dépasser 255 caractères.',
+            'description.required' => 'La description est obligatoire.',
+            'description.string'   => 'La description doit être une chaîne de caractères.',
+            'description.max'      => 'La description ne peut pas dépasser 2000 caractères.',
+            'type.required'        => 'Le type est obligatoire.',
+            'type.string'          => 'Le type doit être une chaîne de caractères.',
+            'type.in'              => 'Le type doit être l\'une des valeurs suivantes : RECLAMATION, DEMANDES, SUPPRESSION ou MODIFICATION.',
+            'user_id.integer'      => 'L\'identifiant de l\'utilisateur doit être un nombre entier.',
+            'user_id.exists'       => 'L\'utilisateur spécifié n\'existe pas.',
+            'company_id.integer'   => 'L\'identifiant de la société doit être un nombre entier.',
+            'company_id.exists'    => 'La société spécifiée n\'existe pas.',
         ]);
 
         try {
             $request = RequestModel::create([
-                'title' => $validatedData['title'],
+                'title'       => $validatedData['title'],
                 'description' => $validatedData['description'],
-                'type' => $validatedData['type'],
-                'user_id' => $validatedData['user_id'],
-                'company_id' => $validatedData['company_id']
+                'type'        => $validatedData['type'],
+                'user_id'     => $validatedData['user_id'] ?? null,
+                'company_id'  => $validatedData['company_id'] ?? null,
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Demande créée avec succès',
-                'data' => $request
-            ], 201); // code qui correspond a "la bonne creation de offer"
+                'message' => 'Demande créée avec succès.',
+                'data'    => $request,
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Echec de l\'ajout de la demande',
-                'error'   => $e->getMessage()
+                'success' => false,
+                'message' => 'Échec de la création de la demande.',
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

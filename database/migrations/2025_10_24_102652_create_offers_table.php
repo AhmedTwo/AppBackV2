@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('location');
             $table->string('category');
             $table->foreignId('employment_type_id')->references('id')->on('employment_type');
-            $table->text('tecnologies_used');
+            $table->text('technologies_used');
             $table->text('benefits')->nullable();
             $table->integer('participants_count')->default(0);
             $table->string('image_url')->default('/public/assets/images/offreDefault.jpeg');

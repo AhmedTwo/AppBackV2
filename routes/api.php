@@ -25,26 +25,26 @@ Route::get('/test', function () {
 
 Route::get('/allOffer', [OfferController::class, 'getOffer']);
 Route::get('/offerById/{id}', [OfferController::class, 'getOfferById']);
-Route::patch('/offerUpdate/{id}', [OfferController::class, 'updateOffer']);
 Route::post('/addOffer', [OfferController::class, 'addOffer']);
+Route::post('/offerUpdate/{id}', [OfferController::class, 'updateOffer']);
 Route::delete('/deleteOffer/{id}', [OfferController::class, 'deleteOffer']);
 
 Route::get('/allUser', [UserController::class, 'getUser']);
 Route::get('/userById/{id}', [UserController::class, 'getUserById']);
-Route::patch('/userUpdate/{id}', [UserController::class, 'updateUser']);
 Route::post('/addUser', [UserController::class, 'addUser']);
+Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
 Route::delete('/deleteUser/{id}', [UserController::class, 'deleteUser']);
 
 Route::get('/allCompany', [CompanyController::class, 'getCompany']);
 Route::get('/companyById/{id}', [CompanyController::class, 'getCompanyById']);
-Route::patch('/companyUpdate/{id}', [CompanyController::class, 'updateCompany']);
 Route::post('/addCompany', [CompanyController::class, 'addCompany']);
+Route::post('/companyUpdate/{id}', [CompanyController::class, 'updateCompany']);
 Route::delete('/deleteCompany/{id}', [CompanyController::class, 'deleteCompany']);
 
 Route::get('/allRequest', [RequestController::class, 'getRequest']);
 Route::get('/requestById/{id}', [RequestController::class, 'getRequestById']);
-Route::patch('/requestUpdate/{id}', [RequestController::class, 'updateRequest']);
 Route::post('/addRequest', [RequestController::class, 'addRequest']);
+Route::post('/requestUpdate/{id}', [RequestController::class, 'updateRequest']);
 Route::delete('/deleteRequest/{id}', [RequestController::class, 'deleteRequest']);
 
 Route::get('/allFavoris', [FavorisController::class, 'getFavoris']);
