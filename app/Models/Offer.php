@@ -5,20 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Requests extends Model
+class Offer extends Model
 {
     use HasFactory;
-    protected $table = 'requests';
+    protected $table = 'offers';
 
     protected $fillable = [
         'id',
         'title',
         'description',
-        'type',
-        'status',
+        'mission',
+        'location',
+        'category',
+        'employment_type_id',
+        'technologies_used',
+        'benefits',
+        'participants_count',
+        'image_url',
         'created_at',
         'updated_at',
-        'user_id',
-        'company_id'
+        'id_company',
     ];
 }

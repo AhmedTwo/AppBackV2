@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Users extends Model
+class User extends Model
 {
     use HasFactory;
     protected $table = 'users';
@@ -54,6 +54,6 @@ class Users extends Model
 
     public function requests()
     {
-        return $this->hasMany(\App\Models\Requests::class, 'users_id');
+        return $this->hasMany(\App\Models\Request::class, 'users_id');
     }
 }

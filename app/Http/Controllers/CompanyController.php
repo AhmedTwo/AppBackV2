@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Companys;
+use App\Models\Company;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
@@ -11,7 +11,7 @@ class CompanyController extends Controller
     public function getCompany()
     {
 
-        $data = Companys::select(
+        $data = Company::select(
             'id',
             'name',
             'logo',
@@ -36,7 +36,7 @@ class CompanyController extends Controller
 
     public function getCompanyById($id)
     {
-        $company = Companys::find($id);
+        $company = Company::find($id);
 
         if (!$company) {
             return response()->json([
@@ -54,7 +54,7 @@ class CompanyController extends Controller
 
     public function updateCompany(Request $requestParam, $id)
     {
-        $company = Companys::find($id);
+        $company = Company::find($id);
 
         if (!$company) {
             return response()->json([
@@ -166,7 +166,7 @@ class CompanyController extends Controller
                 $validatedData['logo'] = $requestParam->file('logo')->store('photo_company', 'public');
             }
 
-            $company = Companys::create([
+            $company = Company::create([
                 'name'                => $validatedData['name'],
                 'logo'                => $validatedData['logo'] ?? null,
                 'number_of_employees' => $validatedData['number_of_employees'],
@@ -195,7 +195,7 @@ class CompanyController extends Controller
     public function deleteCompany($id)
     {
 
-        $company = Companys::find($id);
+        $company = Company::find($id);
 
         if (!$company) {
             return response()->json([

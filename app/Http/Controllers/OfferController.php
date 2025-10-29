@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Offers;
+use App\Models\Offer;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
@@ -10,7 +10,7 @@ class OfferController extends Controller
     public function getOffer()
     {
 
-        $data = Offers::select(
+        $data = Offer::select(
             'id',
             'title',
             'description',
@@ -36,7 +36,7 @@ class OfferController extends Controller
     public function getOfferById($id)
     {
 
-        $offer = Offers::find($id);
+        $offer = Offer::find($id);
 
         if (!$offer) {
             return response()->json([
@@ -55,7 +55,7 @@ class OfferController extends Controller
     public function updateOffer(Request $requestParam, $id)
     {
 
-        $offer = Offers::find($id);
+        $offer = Offer::find($id);
 
         if (!$offer) {
             return response()->json([
@@ -158,7 +158,7 @@ class OfferController extends Controller
         try {
             $validatedData['image_url'] = $requestParam->file('image_url')->store('photo_offer', 'public');
 
-            $offer = Offers::create([
+            $offer = Offer::create([
                 'title'              => $validatedData['title'],
                 'description'        => $validatedData['description'],
                 'mission'            => $validatedData['mission'],
@@ -187,7 +187,7 @@ class OfferController extends Controller
     public function deleteOffer($id)
     {
 
-        $offer = Offers::find($id);
+        $offer = Offer::find($id);
 
         if (!$offer) {
             return response()->json([

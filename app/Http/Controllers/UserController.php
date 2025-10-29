@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Users;
-use Illuminate\Foundation\Auth\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,7 +10,7 @@ class UserController extends Controller
 {
     public function getUser()
     {
-        $data = Users::select(
+        $data = User::select(
             'id',
             'nom',
             'prenom',
@@ -39,7 +38,7 @@ class UserController extends Controller
     public function getUserById($id)
     {
 
-        $user = Users::find($id);
+        $user = User::find($id);
 
         if (!$user) {
 
@@ -59,7 +58,7 @@ class UserController extends Controller
     public function updateUser(Request $requestParam, $id)
     {
         // on trouve l'utilisateur
-        $user = Users::find($id);
+        $user = User::find($id);
 
         // on verifie s'il existe
         if (!$user) {
@@ -190,7 +189,7 @@ class UserController extends Controller
             $role = str_ends_with($email, '@company.com') ? 'company' : 'candidat';
 
             // Création de l'utilisateur
-            $user = Users::create([
+            $user = User::create([
                 'nom' => $validatedData['nom'],
                 'prenom' => $validatedData['prenom'],
                 'email' => $email,
@@ -218,7 +217,6 @@ class UserController extends Controller
             ], 500);
         }
     }
-
 
     public function deleteUser($id)
     {

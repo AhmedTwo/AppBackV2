@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Favorites;
+use App\Models\Favorite;
 use Illuminate\Http\Request;
 
 class FavorisController extends Controller
@@ -10,7 +10,7 @@ class FavorisController extends Controller
     public function getFavoris()
     {
 
-        $data = Favorites::select(
+        $data = Favorite::select(
             'id',
             'user_id',
             'offer_id',
@@ -26,7 +26,7 @@ class FavorisController extends Controller
 
     public function getFavorisById($id)
     {
-        $favoris = Favorites::find($id);
+        $favoris = Favorite::find($id);
 
         if (!$favoris) {
             return response()->json([
@@ -47,7 +47,7 @@ class FavorisController extends Controller
     public function deleteFavoris($id)
     {
 
-        $favoris = Favorites::find($id);
+        $favoris = Favorite::find($id);
 
         if (!$favoris) {
             return response()->json([
