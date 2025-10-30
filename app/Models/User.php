@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Model
 {
     use HasFactory;
+    use HasApiTokens;
     protected $table = 'users';
 
     protected $fillable = [
@@ -55,5 +57,10 @@ class User extends Model
     public function requests()
     {
         return $this->hasMany(\App\Models\Request::class, 'users_id');
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
     }
 }

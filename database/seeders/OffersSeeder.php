@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Offer;
+use Database\Factories\OffersFactory;
 use Illuminate\Database\Seeder;
 
 class OffersSeeder extends Seeder
@@ -56,5 +57,10 @@ class OffersSeeder extends Seeder
             'image_url'          => "/public/assets/images/offreDefault.jpeg",
             'id_company'         => 3,
         ]);
+
+        // sa me permet de faire apl au factories et dajouter 10 alea
+        // OffersFactory::factory()
+        //     ->count(10)
+        //     ->create();
     }
 }

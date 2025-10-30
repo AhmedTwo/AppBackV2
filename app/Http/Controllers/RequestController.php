@@ -25,7 +25,7 @@ class RequestController extends Controller
         return response()->json([
             'success' => true,
             'data' => $data
-        ], 200); // code reponse 200 pour success
+        ], 201);
     }
 
     public function getRequestById($id)

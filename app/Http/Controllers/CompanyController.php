@@ -36,7 +36,7 @@ class CompanyController extends Controller
 
     public function getCompanyById($id)
     {
-        $company = Company::find($id);
+        $company = Company::findOrFail($id);
 
         if (!$company) {
             return response()->json([

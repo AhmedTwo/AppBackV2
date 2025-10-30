@@ -17,9 +17,8 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)
-            ->where('role', 'admin')
-            ->first(); // recup la premiere ligne ayant le role "admin"
+        // Vérifier si l'utilisateur existe // On récupère le 1er qui sort.
+        $user = User::where('email', $request->email)->first();
 
         // Erreur SI utilisateur non trouvé OU si le mot de passe de la requête correspond à celui du User
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -28,6 +27,10 @@ class AuthController extends Controller
                 'message' => 'Email ou mot de passe incorrect'
             ], 401);
         }
+
+        // if (!$user->role == 'admin') {
+        //     return back()->withErrors(['email' => 'Connexion inaccessible']);;
+        // }
 
         // Générer un token pour l'utilisateur avec Sanctum
         $token = $user->createToken('userToken')->plainTextToken;
