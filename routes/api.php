@@ -28,6 +28,7 @@ Route::middleware(['guest'])->group(
     function () {
         Route::post('/login', [AuthController::class, 'login']);
 
+        Route::get('/count', [UserController::class, 'getCount']);
         Route::get('/allOffer', [OfferController::class, 'getOffer']);
         Route::get('/offerById/{id}', [OfferController::class, 'getOfferById']);
 
