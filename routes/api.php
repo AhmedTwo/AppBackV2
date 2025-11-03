@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-
-| C'est ici que vous pouvez enregistrer les routes API pour votre application. Ces
-| routes sont chargées par le RouteServiceProvider au sein d'un groupe auquel
-| est attribué le groupe de middleware « api ». Bonne création d'API !
 */
 
 Route::get('/test', function () {
@@ -27,6 +23,7 @@ Route::get('/test', function () {
 Route::middleware(['guest'])->group(
     function () {
         Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/addUser', [CompanyController::class, 'addUser']);
 
         Route::get('/count', [UserController::class, 'getCount']);
         Route::get('/allOffer', [OfferController::class, 'getOffer']);
@@ -34,20 +31,30 @@ Route::middleware(['guest'])->group(
 
         Route::get('/allCompany', [CompanyController::class, 'getCompany']);
         Route::get('/companyById/{id}', [CompanyController::class, 'getCompanyById']);
+        Route::post('/addCompany', [CompanyController::class, 'addCompany']);
     }
 );
 
-// 2eme mhéthode
-Route::get('/allRequest', [RequestController::class, 'getRequest'])
-    ->middleware(['auth:sanctum', 'role:admin']);
+Route::middleware(['auth:sanctum', 'role: admin'])->group(
+    function () {
+        Route::get('/allRequest', [RequestController::class, 'getRequest']);
+        Route::get('/allUser', [UserController::class, 'getUser']);
+        Route::post('/deleteUser/{id}', [UserController::class, 'deleteUser']);
+    }
+);
 
+// Rôles : company, admin
 Route::middleware(['auth:sanctum', 'role:company,admin'])->group(
     function () {
+        // CORRECTION 1 : Remplacer Route::post par Route::get pour la lecture
+        Route::get('/userById/{id}', [UserController::class, 'getUserById']);
+
+        Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
+
         Route::post('/addOffer', [OfferController::class, 'addOffer']);
         Route::post('/offerUpdate/{id}', [OfferController::class, 'updateOffer']);
         Route::delete('/deleteOffer/{id}', [OfferController::class, 'deleteOffer']);
 
-        Route::get('/addCompany', [CompanyController::class, 'addCompany']);
         Route::post('/companyUpdate/{id}', [CompanyController::class, 'updateCompany']);
         Route::delete('/deleteCompany/{id}', [CompanyController::class, 'deleteCompany']);
 
@@ -57,8 +64,12 @@ Route::middleware(['auth:sanctum', 'role:company,admin'])->group(
     }
 );
 
+// Rôles : candidat, admin
 Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
     function () {
+        // CORRECTION 2 : Remplacer Route::post par Route::get pour la lecture
+        Route::get('/userById/{id}', [UserController::class, 'getUserById']);
+
         Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
 
         Route::get('/requestById/{id}', [RequestController::class, 'getRequestById']);
@@ -72,7 +83,11 @@ Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
 );
 
 
-// l'url ici sera offer/addOffer
+// l'url ici sera donc offer/addOffer
 // Route::prefix('offer')->group(function () {
 //     Route::post('/addOffer', [OfferController::class, 'addOffer']);
 // });
+
+// 2eme mhéthode
+// Route::get('/allRequest', [RequestController::class, 'getRequest'])
+//     ->middleware(['auth:sanctum', 'role:admin']);
