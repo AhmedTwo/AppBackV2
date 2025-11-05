@@ -11,16 +11,19 @@ class RequestController extends Controller
     public function getRequest()
     {
         $data = RequestModel::select(
-            'id',
-            'title',
-            'description',
-            'type',
-            'status',
-            'created_at',
-            'updated_at',
-            'user_id',
-            'company_id',
-        )->get();
+            'requests.id',
+            'requests.title',
+            'requests.description',
+            'requests.type',
+            'requests.status',
+            'requests.created_at',
+            'users.nom',
+            'users.prenom',
+            'users.photo',
+            'users.qualification',
+        )
+            ->join('users', 'requests.user_id', '=', 'users.id')
+            ->get();
 
         return response()->json([
             'success' => true,

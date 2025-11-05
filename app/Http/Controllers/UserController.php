@@ -55,6 +55,26 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function getUserByRole($role)
+    {
+
+        $user = User::where('role', $role)->get();
+
+        if (!$user) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Utilisateur non trouvé',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Utilisateur trouvé',
+            'data' => $user,
+        ], 200);
+    }
+
     public function updateUser(Request $requestParam, $id)
     {
         // on trouve l'utilisateur

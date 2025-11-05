@@ -21,4 +21,9 @@ class Request extends Model
         'user_id',
         'company_id'
     ];
+
+    public function users()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'users_id');
+    }
 }

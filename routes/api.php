@@ -6,8 +6,8 @@ use App\Http\Controllers\FavorisController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,10 +22,10 @@ Route::get('/test', function () {
 // tous les rôles non connecté !!!
 Route::middleware(['guest'])->group(
     function () {
-        Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/addUser', [CompanyController::class, 'addUser']);
+        Route::post('/login', [AuthController::class, 'login']); // connexion
+        Route::post('/addUser', [CompanyController::class, 'addUser']); // inscription
 
-        Route::get('/count', [UserController::class, 'getCount']);
+        Route::get('/count', [UserController::class, 'getCount']); // affichage page d'entrée
         Route::get('/allOffer', [OfferController::class, 'getOffer']);
         Route::get('/offerById/{id}', [OfferController::class, 'getOfferById']);
 
@@ -35,11 +35,13 @@ Route::middleware(['guest'])->group(
     }
 );
 
-Route::middleware(['auth:sanctum', 'role: admin'])->group(
+Route::middleware(['auth:sanctum', 'role:admin'])->group(
     function () {
-        Route::get('/allRequest', [RequestController::class, 'getRequest']);
         Route::get('/allUser', [UserController::class, 'getUser']);
+        Route::get('/userByRole/{role}', [UserController::class, 'getUserByRole']);
         Route::post('/deleteUser/{id}', [UserController::class, 'deleteUser']);
+
+        Route::get('/allRequest', [RequestController::class, 'getRequest']);
     }
 );
 

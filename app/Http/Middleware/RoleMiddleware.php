@@ -35,7 +35,7 @@ class RoleMiddleware
         // si le rôle du user n'est PAS dans la liste des rôles autorisés → 403
         if (!in_array($userRole, $allowedRoles, true)) {
             return response()->json([
-                'message' => 'Forbidden. Missing required role.',
+                'message' => 'Authentifié. Mais pas le bon role.',
                 'required_roles' => $allowedRoles,
                 'your_role' => $userRole,
             ], 403);

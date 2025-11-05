@@ -9,7 +9,6 @@ class OfferController extends Controller
 {
     public function getOffer()
     {
-
         $data = Offer::select(
             'id',
             'title',
@@ -17,7 +16,7 @@ class OfferController extends Controller
             'mission',
             'location',
             'category',
-            'employment_type_id',
+            'employment_type_id', // dans le front on a donc appelé {{ offer.employment_type.name }}
             'technologies_used',
             'benefits',
             'participants_count',
@@ -25,7 +24,9 @@ class OfferController extends Controller
             'created_at',
             'updated_at',
             'id_company',
-        )->get();
+        )->with('employment_type')->get();
+
+
 
         return response()->json([
             'success' => true,

@@ -26,4 +26,9 @@ class Offer extends Model
         'updated_at',
         'id_company',
     ];
+
+    public function employment_type()
+    {
+        return $this->belongsTo(\App\Models\Employment_type::class, 'employment_type_id'); // sert a communiquer via les clefs etrangere 
+    }
 }
