@@ -50,6 +50,46 @@ class RequestController extends Controller
         ], 200);
     }
 
+    /**
+     * Récupère toutes les demandes liées à un ID utilisateur spécifique.
+     * C'est la fonction nécessaire pour la vue 'Mes Demandes'.
+     *
+     * @param int $userId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getRequestsByUser($userId)
+    {
+        // Jointures pour obtenir les détails de l'utilisateur/créateur de la demande
+        $data = RequestModel::select(
+            'requests.id',
+            'requests.title',
+            'requests.description',
+            'requests.type',
+            'requests.status',
+            'requests.created_at',
+            'users.nom',
+            'users.prenom',
+            'users.photo',
+            'users.qualification',
+        )
+            ->join('users', 'requests.user_id', '=', 'users.id')
+            ->where('requests.user_id', $userId)
+            ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Aucune demande trouvée pour cet utilisateur.',
+                'data' => []
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
+    }
+
     public function updateRequest(Request $requestParam, $id)
     {
         $request = RequestModel::find($id);

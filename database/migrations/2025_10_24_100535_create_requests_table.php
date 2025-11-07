@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('status')->default('en_cours');
             $table->timestamps();
             $table->foreignId('user_id')->references('id')->on('user'); // clé etragere
-            $table->foreignId('company_id')->references('id')->on('company'); // clé etragere
         });
     }
 

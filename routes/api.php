@@ -48,11 +48,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(
 // Rôles : company, admin
 Route::middleware(['auth:sanctum', 'role:company,admin'])->group(
     function () {
-        // CORRECTION 1 : Remplacer Route::post par Route::get pour la lecture
-        Route::get('/userById/{id}', [UserController::class, 'getUserById']);
 
         Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
 
+        Route::get('/myOffers', [OfferController::class, 'getOffersByCompany']);
         Route::post('/addOffer', [OfferController::class, 'addOffer']);
         Route::post('/offerUpdate/{id}', [OfferController::class, 'updateOffer']);
         Route::delete('/deleteOffer/{id}', [OfferController::class, 'deleteOffer']);
@@ -69,9 +68,6 @@ Route::middleware(['auth:sanctum', 'role:company,admin'])->group(
 // Rôles : candidat, admin
 Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
     function () {
-        // CORRECTION 2 : Remplacer Route::post par Route::get pour la lecture
-        Route::get('/userById/{id}', [UserController::class, 'getUserById']);
-
         Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
 
         Route::get('/requestById/{id}', [RequestController::class, 'getRequestById']);
@@ -83,6 +79,12 @@ Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
         Route::delete('/deleteFavoris/{id}', [FavorisController::class, 'deleteFavoris']);
     }
 );
+
+Route::middleware(['auth:sanctum', 'role:candidat,company,admin'])->group(function () {
+    Route::get('/userById/{id}', [UserController::class, 'getUserById']);
+    Route::get('/requestsByUser/{userId}', [RequestController::class, 'getRequestsByUser']);
+});
+
 
 
 // l'url ici sera donc offer/addOffer

@@ -17,4 +17,14 @@ class Favorite extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function users()
+    {
+        return $this->belongsTo(\App\Models\Favorite::class, 'user_id'); // sert a communiquer via les clefs etrangere 
+    }
+
+    public function job_offers()
+    {
+        return $this->hasMany(\App\Models\Favorite::class, 'offer_id');
+    }
 }

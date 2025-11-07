@@ -24,7 +24,8 @@ class OfferController extends Controller
             'created_at',
             'updated_at',
             'id_company',
-        )->with('employment_type')->get();
+        )->with('employment_type')
+            ->get();
 
 
 
@@ -51,6 +52,21 @@ class OfferController extends Controller
             'message' => 'Offre trouvée',
             'data' => $offer
         ], 200);
+    }
+
+    public function getOffersByCompany(Request $request)
+    {
+
+        $user = $request->user(); // utilisateur connecté
+
+        $companyId = $user->company_id;
+
+        $offers = Offer::with('employment_type')
+            ->where('id_company', $companyId)
+            ->get();
+        return response()->json([
+            'data' => $offers
+        ]);
     }
 
     public function updateOffer(Request $requestParam, $id)
