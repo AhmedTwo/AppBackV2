@@ -135,8 +135,6 @@ class OfferController extends Controller
             'employment_type_id' => 'required|integer|exists:employment_type,id',
             'technologies_used'  => 'required|string|max:255',
             'benefits'           => 'required|string|max:255',
-            'image_url'          => 'required|file|mimes:jpeg,png,jpg,webp|max:2048',
-            'id_company'         => 'required|integer|exists:companys,id',
         ], [
             // Champs obligatoires
             'title.required'              => 'Le titre est obligatoire.',
@@ -163,17 +161,18 @@ class OfferController extends Controller
             'benefits.required'           => 'Les avantages sont obligatoires.',
             'benefits.string'             => 'Les avantages doivent être une chaîne de caractères.',
             'benefits.max'                => 'Les avantages ne peuvent pas dépasser 255 caractères.',
-            'image_url.required'          => 'L\'image est obligatoire.',
-            'image_url.file'              => 'L\'image doit être un fichier.',
-            'image_url.mimes'             => 'L\'image doit être au format jpeg, png, jpg ou webp.',
-            'image_url.max'               => 'L\'image est trop volumineuse (2 Mo maximum).',
-            'id_company.required'         => 'L\'entreprise associée est obligatoire.',
-            'id_company.integer'          => 'L\'identifiant de l\'entreprise doit être un entier valide.',
-            'id_company.exists'           => 'L\'entreprise sélectionnée n\'existe pas.',
         ]);
 
+        //  recuperation de l'ID de la Compagnie Connectée 
+
+        // on recup l'utilisateur (company) connecté via le token
+        $user = $requestParam->user();
+
+        // on recup l'ID de la compagnie rattachée à cet utilisateur
+        $companyId = $user->company_id;
+
         try {
-            $validatedData['image_url'] = $requestParam->file('image_url')->store('photo_offer', 'public');
+            // $validatedData['image_url'] = $requestParam->file('image_url')->store('photo_offer', 'public');
 
             $offer = Offer::create([
                 'title'              => $validatedData['title'],
@@ -184,8 +183,8 @@ class OfferController extends Controller
                 'employment_type_id' => $validatedData['employment_type_id'],
                 'technologies_used'  => $validatedData['technologies_used'],
                 'benefits'           => $validatedData['benefits'],
-                'image_url'          => $validatedData['image_url'],
-                'id_company'         => $validatedData['id_company'],
+                'image_url'          => '/assets/images/offerDefault.jpeg', // image par defaut car je sais pas faire cote front
+                'id_company'         => $companyId,
             ]);
 
             return response()->json([

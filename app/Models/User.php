@@ -29,6 +29,7 @@ class User extends Model
         'photo',
         'created_at',
         'updated_at',
+        'company_id'
     ];
 
     /**
@@ -57,6 +58,11 @@ class User extends Model
     public function requests()
     {
         return $this->hasMany(\App\Models\Request::class, 'users_id');
+    }
+
+    public function companys()
+    {
+        return $this->hasMany(\App\Models\Company::class, 'id');
     }
 
     public function getRole(): string
