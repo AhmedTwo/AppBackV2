@@ -164,7 +164,6 @@ class OfferController extends Controller
         ]);
 
         //  recuperation de l'ID de la Compagnie Connectée 
-
         // on recup l'utilisateur (company) connecté via le token
         $user = $requestParam->user();
 

@@ -146,11 +146,9 @@ class UserController extends Controller
             'telephone' => 'required|string|max:20',
             'ville' => 'required|string|max:50',
             'code_postal' => 'required|string|max:20',
-            'cv_pdf' => 'required|file|mimes:pdf|max:2048',
-            'qualification' => 'required|string|max:255',
-            'preference' => 'required|string|max:255',
-            'disponibilite' => 'required|string|max:255',
-            'photo' => 'required|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'qualification' => 'sometimes|string|max:255',
+            'preference' => 'sometimes|max:255',
+            'disponibilite' => 'sometimes|string|max:255',
         ], [
             // Messages personnalisés
             'nom.required'         => 'Le nom est obligatoire.',
@@ -177,29 +175,16 @@ class UserController extends Controller
             'code_postal.required' => 'Le code postal est obligatoire.',
             'code_postal.string'   => 'Le code postal doit être une chaîne de caractères.',
             'code_postal.max'      => 'Le code postal ne peut pas dépasser 20 caractères.',
-            'cv_pdf.required'      => 'Le CV est obligatoire.',
-            'cv_pdf.file'          => 'Le CV doit être un fichier.',
-            'cv_pdf.mimes'         => 'Le CV doit être au format PDF.',
-            'cv_pdf.max'           => 'Le CV est trop volumineux (2 Mo maximum).',
-            'qualification.required' => 'La qualification est obligatoire.',
             'qualification.string'   => 'La qualification doit être une chaîne de caractères.',
             'qualification.max'      => 'La qualification ne peut pas dépasser 255 caractères.',
-            'preference.required'  => 'La préférence est obligatoire.',
-            'preference.string'    => 'La préférence doit être une chaîne de caractères.',
-            'preference.max'       => 'La préférence ne peut pas dépasser 255 caractères.',
-            'disponibilite.required' => 'La disponibilité est obligatoire.',
             'disponibilite.string'   => 'La disponibilité doit être une chaîne de caractères.',
             'disponibilite.max'      => 'La disponibilité ne peut pas dépasser 255 caractères.',
-            'photo.required'       => 'La photo est obligatoire.',
-            'photo.file'           => 'L\'image doit être un fichier.',
-            'photo.mimes'          => 'L\'image doit être au format jpeg, png, jpg ou webp.',
-            'photo.max'            => 'L\'image est trop volumineuse (2 Mo maximum).',
         ]);
 
         try {
             // Sauvegarde des fichiers
-            $validatedData['photo'] = $requestParam->file('photo')->store('photo_user', 'public');
-            $validatedData['cv_pdf'] = $requestParam->file('cv_pdf')->store('cv', 'public');
+            // $validatedData['photo'] = $requestParam->file('photo')->store('photo_user', 'public');
+            // $validatedData['cv_pdf'] = $requestParam->file('cv_pdf')->store('cv', 'public');
 
             // Hachage du mot de passe
             $validatedData['password'] = Hash::make($validatedData['password']);
@@ -218,11 +203,11 @@ class UserController extends Controller
                 'telephone' => $validatedData['telephone'],
                 'ville' => $validatedData['ville'],
                 'code_postal' => $validatedData['code_postal'],
-                'cv_pdf' => $validatedData['cv_pdf'],
                 'qualification' => $validatedData['qualification'],
                 'preference' => $validatedData['preference'],
                 'disponibilite' => $validatedData['disponibilite'],
-                'photo' => $validatedData['photo'],
+                'cv_pdf' => '/public/storage/cv/cbc2yhxVaYUJqvFLNqW7laKVRd0UiniSAowm6Y1s.pdf',
+                'photo' => '/public/storage/photo_user/zudFw2xGTfnOF2iLEXLKdwLQBmzDy6KiXzh2mGI2.jpg',
             ]);
 
             return response()->json([
@@ -266,7 +251,6 @@ class UserController extends Controller
         }
     }
 
-    public function login() {}
     public function sendEmail() {}
     public function passwordForget() {}
     private function generatePassword() {}

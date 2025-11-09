@@ -127,11 +127,8 @@ class RequestController extends Controller
     {
         $validatedData = $requestParam->validate([
             'title'       => 'required|string|max:255',
-            'description' => 'required|string|max:2000',
             'type'        => 'required|string|max:255|in:RECLAMATION,DEMANDES,SUPPRESSION,MODIFICATION',
-            'user_id'     => 'nullable|integer|exists:users,id|required_without:company_id',
-            'company_id'  => 'nullable|integer|exists:companys,id|required_without:user_id',
-            // forcer au moins un des deux : → ajouter required_without et la colonne en question
+            'description' => 'required|string|max:2000',
         ], [
             'title.required'       => 'Le titre est obligatoire.',
             'title.string'         => 'Le titre doit être une chaîne de caractères.',
@@ -142,19 +139,20 @@ class RequestController extends Controller
             'type.required'        => 'Le type est obligatoire.',
             'type.string'          => 'Le type doit être une chaîne de caractères.',
             'type.in'              => 'Le type doit être l\'une des valeurs suivantes : RECLAMATION, DEMANDES, SUPPRESSION ou MODIFICATION.',
-            'user_id.integer'      => 'L\'identifiant de l\'utilisateur doit être un nombre entier.',
-            'user_id.exists'       => 'L\'utilisateur spécifié n\'existe pas.',
-            'company_id.integer'   => 'L\'identifiant de la société doit être un nombre entier.',
-            'company_id.exists'    => 'La société spécifiée n\'existe pas.',
         ]);
+
+        // on recup l'utilisateur connecté via le token
+        $user = $requestParam->user();
+
+        // on recup l'ID de la compagnie rattachée à cet utilisateur
+        $companyId = $user->id;
 
         try {
             $request = RequestModel::create([
                 'title'       => $validatedData['title'],
-                'description' => $validatedData['description'],
                 'type'        => $validatedData['type'],
-                'user_id'     => $validatedData['user_id'] ?? null,
-                'company_id'  => $validatedData['company_id'] ?? null,
+                'description' => $validatedData['description'],
+                'user_id'     => $companyId,
             ]);
 
             return response()->json([

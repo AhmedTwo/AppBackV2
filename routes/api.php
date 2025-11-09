@@ -6,6 +6,7 @@ use App\Http\Controllers\FavorisController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -23,15 +24,17 @@ Route::get('/test', function () {
 Route::middleware(['guest'])->group(
     function () {
         Route::post('/login', [AuthController::class, 'login']); // connexion
-        Route::post('/addUser', [CompanyController::class, 'addUser']); // inscription
+        Route::post('/addUser', [UserController::class, 'addUser']); // inscription
 
-        Route::get('/count', [UserController::class, 'getCount']); // affichage page d'entrée
+        Route::get('/count', [Controller::class, 'getCount']); // affichage compteur page d'entrée
         Route::get('/allOffer', [OfferController::class, 'getOffer']);
         Route::get('/offerById/{id}', [OfferController::class, 'getOfferById']);
 
         Route::get('/allCompany', [CompanyController::class, 'getCompany']);
         Route::get('/companyById/{id}', [CompanyController::class, 'getCompanyById']);
         Route::post('/addCompany', [CompanyController::class, 'addCompany']);
+
+        Route::get('/allRequest', [RequestController::class, 'getRequest']);
     }
 );
 
@@ -40,8 +43,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(
         Route::get('/allUser', [UserController::class, 'getUser']);
         Route::get('/userByRole/{role}', [UserController::class, 'getUserByRole']);
         Route::post('/deleteUser/{id}', [UserController::class, 'deleteUser']);
-
-        Route::get('/allRequest', [RequestController::class, 'getRequest']);
     }
 );
 
@@ -82,6 +83,7 @@ Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
 
 Route::middleware(['auth:sanctum', 'role:candidat,company,admin'])->group(function () {
     Route::get('/userById/{id}', [UserController::class, 'getUserById']);
+    Route::post('/addRequest', [RequestController::class, 'addRequest']);
     Route::get('/requestsByUser/{userId}', [RequestController::class, 'getRequestsByUser']);
 });
 

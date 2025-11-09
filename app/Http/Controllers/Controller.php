@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 use App\Models\User;
 use App\Models\Offer;
 use App\Models\Company;
-
+use App\Models\Request;
 
 class Controller extends BaseController
 {
@@ -31,11 +31,16 @@ class Controller extends BaseController
             'id'
         )->count();
 
+        $dataRequest = Request::select(
+            'id'
+        )->count();
+
         return response()->json([
             'success' => true,
             'User' => $dataUser,
             'Offer' => $dataOffer,
-            'Company' => $dataCompany
+            'Company' => $dataCompany,
+            'Request' => $dataRequest
         ], 200); // code reponse 200 pour success
     }
 }
