@@ -95,7 +95,7 @@ class UserController extends Controller
             'telephone' => 'sometimes|string|max:20',
             'ville' => 'sometimes|string|max:50',
             'code_postal' => 'sometimes|string|max:20',
-            'cv_pdf' => 'sometimes|string|max:255',
+            'cv_pdf' => 'sometimes|file|mimes:pdf|max:10240',
             'qualification' => 'sometimes|string|max:255',
             'preference' => 'sometimes|string|max:255',
             'disponibilite' => 'sometimes|boolean',
@@ -136,17 +136,24 @@ class UserController extends Controller
 
     public function addUser(Request $requestParam)
     {
+        // Ajout de 'company_id' comme champ optionnel (par défaut, pour un candidat)
         $validatedData = $requestParam->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|max:255',
             'telephone' => 'required|string|max:20',
             'ville' => 'required|string|max:50',
             'code_postal' => 'required|string|max:20',
-            'qualification' => 'sometimes|string|max:255',
-            'preference' => 'sometimes|max:255',
-            'disponibilite' => 'sometimes|boolean',
+            'qualification' => 'nullable|string|max:255',
+            'preference' => 'nullable|string|max:255',
+            'disponibilite' => 'nullable|in:0,1',
+            // 'nullable' : La photo est optionnelle
+            // 'image' : Assure que c'est un fichier image valide (jpg, png, gif, svg, webp)
+            // 'max:2048' : Taille maximale de 2 Mo (2048 kilobytes)
+            'photo' => 'nullable|image|max:2048',
+            'cv_pdf' => 'nullable|file|mimes:pdf|max:10240', // 10Mo max pour le PDF
+            'company_id' => 'nullable|integer|exists:companys,id',
         ], [
             // Messages personnalisés
             'nom.required'         => 'Le nom est obligatoire.',
@@ -177,19 +184,50 @@ class UserController extends Controller
             'qualification.max'      => 'La qualification ne peut pas dépasser 255 caractères.',
             'disponibilite.string'   => 'La disponibilité doit être une chaîne de caractères.',
             'disponibilite.max'      => 'La disponibilité ne peut pas dépasser 255 caractères.',
+            'photo.image' => 'Le fichier doit être une image (jpeg, png, etc.).',
+            'photo.max' => 'La taille de l\'image ne doit pas dépasser 2 Mo.',
+            'cv_pdf.file' => 'Le CV doit être un fichier.',
+            'cv_pdf.mimes' => 'Le CV doit être au format PDF.',
+            'cv_pdf.max' => 'La taille du CV ne doit pas dépasser 10 Mo.',
+            'company_id.exists' => 'L\'ID de la société fournie n\'existe pas.'
         ]);
 
         try {
-            // Sauvegarde des fichiers
-            // $validatedData['photo'] = $requestParam->file('photo')->store('photo_user', 'public');
-            // $validatedData['cv_pdf'] = $requestParam->file('cv_pdf')->store('cv', 'public');
+
+            $photoPath = null;
+            $cvPath = null;
+
+            // LOGIQUE DE GESTION ET DE SAUVEGARDE DU FICHIER PHOTO
+            if ($requestParam->hasFile('photo')) {
+                $photoPath = $requestParam->file('photo')->store('photo_user', 'public');
+            }
+
+            // LOGIQUE DE GESTION ET DE SAUVEGARDE DU FICHIER CV
+            if ($requestParam->hasFile('cv_pdf')) {
+                $cvPath = $requestParam->file('cv_pdf')->store('cv', 'public');
+            }
+
+            // LOGIQUE POUR GÉRER LE RÔLE AUTOMATIQUEMENT
+            $email = $validatedData['email'];
+
+            if (isset($validatedData['company_id'])) {
+                // Si company_id est présent (provient du formulaire AddCompany)
+                $role = 'company';
+                // s'assurer que si c'est un user company, 
+                // le champ company_id est bien mis à jour
+                $companyId = $validatedData['company_id'];
+            } else {
+                // Sinon (formulaire d'inscription normal)
+                $role = str_ends_with($email, '@company.com') ? 'company' : 'candidat';
+                $companyId = null;
+            }
 
             // Hachage du mot de passe
             $validatedData['password'] = Hash::make($validatedData['password']);
 
-            // Détermination du rôle
-            $email = $validatedData['email'];
-            $role = str_ends_with($email, '@company.com') ? 'company' : 'candidat';
+            $qualificationValue = $validatedData['qualification'] ?? ''; // La chaîne vide pour NOT NULL
+            $preferenceValue = $validatedData['preference'] ?? null; // Null est OK pour preference
+            $cvPathValue = $cvPath ?? ''; // $cvPath est null si aucun fichier n'a été uploadé
 
             // Création de l'utilisateur
             $user = User::create([
@@ -197,15 +235,19 @@ class UserController extends Controller
                 'prenom' => $validatedData['prenom'],
                 'email' => $email,
                 'password' => $validatedData['password'],
-                'role' => $role,
+                'role' => $role, // Rôle déterminé par la nouvelle logique
                 'telephone' => $validatedData['telephone'],
                 'ville' => $validatedData['ville'],
                 'code_postal' => $validatedData['code_postal'],
-                'qualification' => $validatedData['qualification'],
-                'preference' => $validatedData['preference'],
-                'disponibilite' => $validatedData['disponibilite'],
-                'cv_pdf' => '/public/storage/cv/cbc2yhxVaYUJqvFLNqW7laKVRd0UiniSAowm6Y1s.pdf',
-                'photo' => '/public/storage/photo_user/zudFw2xGTfnOF2iLEXLKdwLQBmzDy6KiXzh2mGI2.jpg',
+                'qualification' => $qualificationValue,
+                'preference' => $preferenceValue,
+                'disponibilite' => (int)($validatedData['disponibilite'] ?? 0),
+
+                // LIAISON AVEC LA SOCIÉTÉ
+                'company_id' => $companyId,
+
+                'photo' => $photoPath ?? '/public/assets/images/userDefault.jpeg',
+                'cv_pdf' => $cvPathValue, // Sera '' si manquant et $cvPath est null
             ]);
 
             return response()->json([
