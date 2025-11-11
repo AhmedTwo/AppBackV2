@@ -50,8 +50,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(
 Route::middleware(['auth:sanctum', 'role:company,admin'])->group(
     function () {
 
-        Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
-
         Route::get('/myOffers', [OfferController::class, 'getOffersByCompany']);
         Route::post('/addOffer', [OfferController::class, 'addOffer']);
         Route::post('/offerUpdate/{id}', [OfferController::class, 'updateOffer']);
@@ -59,22 +57,13 @@ Route::middleware(['auth:sanctum', 'role:company,admin'])->group(
 
         Route::post('/companyUpdate/{id}', [CompanyController::class, 'updateCompany']);
         Route::delete('/deleteCompany/{id}', [CompanyController::class, 'deleteCompany']);
-
-        Route::get('/requestById/{id}', [RequestController::class, 'getRequestById']);
-        Route::post('/requestUpdate/{id}', [RequestController::class, 'updateRequest']);
-        Route::delete('/deleteRequest/{id}', [RequestController::class, 'deleteRequest']);
     }
 );
 
 // Rôles : candidat, admin
 Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
     function () {
-        Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
-
-        Route::get('/requestById/{id}', [RequestController::class, 'getRequestById']);
-        Route::post('/requestUpdate/{id}', [RequestController::class, 'updateRequest']);
         Route::delete('/deleteRequest/{id}', [RequestController::class, 'deleteRequest']);
-
         Route::get('/favorisById/{id}', [FavorisController::class, 'getFavorisById']);
         Route::post('/addFavoris', [FavorisController::class, 'addFavoris']);
         Route::delete('/deleteFavoris/{id}', [FavorisController::class, 'deleteFavoris']);
@@ -82,9 +71,15 @@ Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
 );
 
 Route::middleware(['auth:sanctum', 'role:candidat,company,admin'])->group(function () {
+    
     Route::get('/userById/{id}', [UserController::class, 'getUserById']);
+    Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
+
     Route::post('/addRequest', [RequestController::class, 'addRequest']);
+    Route::get('/requestById/{id}', [RequestController::class, 'getRequestById']);
     Route::get('/requestsByUser/{userId}', [RequestController::class, 'getRequestsByUser']);
+    Route::post('/requestUpdate/{id}', [RequestController::class, 'updateRequest']);
+    Route::delete('/deleteRequest/{id}', [RequestController::class, 'deleteRequest']);
 });
 
 

@@ -98,7 +98,7 @@ class UserController extends Controller
             'cv_pdf' => 'sometimes|string|max:255',
             'qualification' => 'sometimes|string|max:255',
             'preference' => 'sometimes|string|max:255',
-            'disponibilite' => 'sometimes|string|max:255',
+            'disponibilite' => 'sometimes|boolean',
             'photo' => 'sometimes|file|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             // Messages personnalisés
@@ -118,8 +118,6 @@ class UserController extends Controller
             'qualification.max'    => 'La qualification ne peut pas dépasser 255 caractères.',
             'preference.string' => 'La préférence doit être une chaîne de caractères.',
             'preference.max'    => 'La préférence ne peut pas dépasser 255 caractères.',
-            'disponibilite.string' => 'La disponibilité doit être une chaîne de caractères.',
-            'disponibilite.max'    => 'La disponibilité ne peut pas dépasser 255 caractères.',
             'photo.file'        => 'L\'image doit être un fichier.',
             'photo.mimes'       => 'L\'image doit être au format jpeg, png, jpg ou webp.',
             'photo.max'         => 'L\'image est trop volumineuse (2 Mo maximum).',
@@ -148,7 +146,7 @@ class UserController extends Controller
             'code_postal' => 'required|string|max:20',
             'qualification' => 'sometimes|string|max:255',
             'preference' => 'sometimes|max:255',
-            'disponibilite' => 'sometimes|string|max:255',
+            'disponibilite' => 'sometimes|boolean',
         ], [
             // Messages personnalisés
             'nom.required'         => 'Le nom est obligatoire.',
