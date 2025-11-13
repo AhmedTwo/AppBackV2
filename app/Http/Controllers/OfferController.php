@@ -163,7 +163,7 @@ class OfferController extends Controller
             'benefits.max'                => 'Les avantages ne peuvent pas dépasser 255 caractères.',
         ]);
 
-        //  recuperation de l'ID de la Compagnie Connectée 
+        // recuperation de l'ID de la Compagnie Connectée 
         // on recup l'utilisateur (company) connecté via le token
         $user = $requestParam->user();
 
@@ -171,7 +171,6 @@ class OfferController extends Controller
         $companyId = $user->company_id;
 
         try {
-            // $validatedData['image_url'] = $requestParam->file('image_url')->store('photo_offer', 'public');
 
             $offer = Offer::create([
                 'title'              => $validatedData['title'],

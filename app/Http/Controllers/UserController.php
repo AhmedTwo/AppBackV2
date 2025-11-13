@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -122,6 +123,17 @@ class UserController extends Controller
             'photo.mimes'       => 'L\'image doit être au format jpeg, png, jpg ou webp.',
             'photo.max'         => 'L\'image est trop volumineuse (2 Mo maximum).',
         ]);
+
+        // Gestion de la photo
+        if ($requestParam->hasFile('photo')) {
+            $photoPath = $requestParam->file('photo')->store('photos', 'public');
+            $validatedData['photo'] = $photoPath;
+
+            // Supprimer l'ancienne photo si elle existe
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
+        }
 
         // on met à jour l'utilisateur
         $user->update($validatedData);

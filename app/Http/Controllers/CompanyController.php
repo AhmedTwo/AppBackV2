@@ -65,15 +65,18 @@ class CompanyController extends Controller
 
         $validatedData = $requestParam->validate([
             'name'                => 'sometimes|string|max:255',
-            'logo'                => 'sometimes|file|mimes:jpeg,png,jpg,webp|max:2048',
-            'number_of_employees' => 'sometimes|integer',
+            // Si vous envoyez le logo comme URL (string), vous avez besoin d'une règle 'string' ou d'ignorer 'file'
+            // Si vous envoyez un fichier, c'est OK (voir point B pour la méthode d'envoi)
+            'logo'                  => 'sometimes|file|mimes:jpeg,png,jpg,webp|max:2048',
+            // AJOUTER 'nullable' pour autoriser l'envoi de champs vides ou nulls
+            'number_of_employees' => 'sometimes|nullable|integer',
             'industry'            => 'sometimes|string|max:255',
             'address'             => 'sometimes|string|max:255',
-            'latitude'            => 'sometimes|numeric',
-            'longitude'           => 'sometimes|numeric',
+            'latitude'              => 'sometimes|nullable|numeric',
+            'longitude'             => 'sometimes|nullable|numeric',
             'description'         => 'sometimes|string|max:2000',
             'email_company'       => 'sometimes|string|email|max:255|unique:companys,email_company,' . $id,
-            'n_siret'             => 'sometimes|string|min:14|max:14',
+            'n_siret' => 'sometimes|nullable|string|min:14|max:14',
         ], [
             // Champs texte
             'name.string'                => 'Le nom doit être une chaîne de caractères.',
@@ -99,8 +102,9 @@ class CompanyController extends Controller
             'logo.max'                   => 'Le logo est trop volumineux (2 Mo maximum).',
         ]);
 
-        // Gestion du logo
+        // Gestion du logo :
         if ($requestParam->hasFile('logo')) {
+            // S'assurer que 'Storage' est importé 
             if ($company->logo) {
                 Storage::disk('public')->delete($company->logo);
             }
