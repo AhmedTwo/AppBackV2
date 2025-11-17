@@ -6,6 +6,9 @@ use App\Http\Controllers\FavorisController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SendIdentifiantCompanyController;
+use App\Http\Controllers\ApplyOfferController;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -35,6 +38,9 @@ Route::middleware(['guest'])->group(
         Route::post('/addCompany', [CompanyController::class, 'addCompany']);
 
         Route::get('/allRequest', [RequestController::class, 'getRequest']);
+
+        Route::post('/contact', [ContactController::class, 'submitContact']);
+        Route::post('/send-identifiants-company', [SendIdentifiantCompanyController::class, 'sendIdentifiants']);
     }
 );
 
@@ -71,7 +77,7 @@ Route::middleware(['auth:sanctum', 'role:candidat,admin'])->group(
 );
 
 Route::middleware(['auth:sanctum', 'role:candidat,company,admin'])->group(function () {
-    
+
     Route::get('/userById/{id}', [UserController::class, 'getUserById']);
     Route::post('/userUpdate/{id}', [UserController::class, 'updateUser']);
 
@@ -80,6 +86,8 @@ Route::middleware(['auth:sanctum', 'role:candidat,company,admin'])->group(functi
     Route::get('/requestsByUser/{userId}', [RequestController::class, 'getRequestsByUser']);
     Route::post('/requestUpdate/{id}', [RequestController::class, 'updateRequest']);
     Route::delete('/deleteRequest/{id}', [RequestController::class, 'deleteRequest']);
+
+    Route::post('/apply-offer', [ApplyOfferController::class, 'sendSummaryOffer']);
 });
 
 
