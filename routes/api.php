@@ -12,6 +12,7 @@ use App\Http\Controllers\ApplyOfferController;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,3 +101,12 @@ Route::middleware(['auth:sanctum', 'role:candidat,company,admin'])->group(functi
 // 2eme mhéthode
 // Route::get('/allRequest', [RequestController::class, 'getRequest'])
 //     ->middleware(['auth:sanctum', 'role:admin']);
+
+
+// Test d'envoi de mail
+Route::get('/test-env', function () {
+    return [
+        'MAIL_USERNAME' => env('MAIL_USERNAME'),
+        'MAIL_PASSWORD' => env('MAIL_PASSWORD')
+    ];
+});

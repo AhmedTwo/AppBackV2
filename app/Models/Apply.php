@@ -30,16 +30,16 @@ class Apply extends Model
     /**
      * Relation: Une candidature (Apply) appartient à une offre (Offer).
      */
-    public function offer(): BelongsTo
+    public function offer()
     {
-        return $this->belongsTo(Offer::class);
+        return $this->belongsTo(Offer::class, 'offer_id');
     }
 
     /**
      * Relation: Une candidature (Apply) appartient à un utilisateur (User).
      */
-    public function user(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

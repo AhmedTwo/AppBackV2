@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Offer extends Model
 {
     use HasFactory;
+
     protected $table = 'offers';
 
     protected $fillable = [
-        'id',
         'title',
         'description',
         'mission',
@@ -22,13 +22,21 @@ class Offer extends Model
         'benefits',
         'participants_count',
         'image_url',
-        'created_at',
-        'updated_at',
         'id_company',
     ];
 
     public function employment_type()
     {
-        return $this->belongsTo(\App\Models\Employment_type::class, 'employment_type_id'); // sert a communiquer via les clefs etrangere 
+        return $this->belongsTo(Employment_type::class, 'employment_type_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'id_company');
+    }
+
+    public function applies()
+    {
+        return $this->hasMany(Apply::class, 'offer_id');
     }
 }

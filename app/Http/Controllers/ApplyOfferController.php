@@ -120,16 +120,15 @@ class ApplyOfferController extends Controller
     {
         // Instanciation de la classe PHPMailer. `true` active les exceptions.
         $mail = new PHPMailer(true);
+        $mail->SMTPDebug = 2; // ca va écrire exactement pourquoi l’email ne part pas dans storage/logs/laravel.log.
 
         // Récupération des identifiants SMTP à partir des variables d'environnement (.env).
         $auth_email = env('MAIL_USERNAME');
         $auth_password = env('MAIL_PASSWORD');
 
-        // Vérification de la configuration.
-        if (empty($auth_email) || empty($auth_password)) {
-            Log::error("Erreur de configuration SMTP: MAIL_USERNAME ou MAIL_PASSWORD non défini.");
-            return false;
-        }
+        // verifier dans les logs les infos du fichier .env
+        Log::info('MAIL_USERNAME récupéré : ' . env('MAIL_USERNAME'));
+        Log::info('MAIL_PASSWORD récupéré : ' . env('MAIL_PASSWORD'));
 
         try {
             // Configuration générale du serveur SMTP
@@ -154,6 +153,8 @@ class ApplyOfferController extends Controller
             $mail->Body = $body; // Corps du message (HTML).
             $mail->AltBody = strip_tags($body); // Version texte simple du corps (pour les clients qui n'affichent pas le HTML).
 
+            Log::info("PHPMailer prêt à envoyer à: " . $toEmail);
+
             // Envoi de l'e-mail.
             $mail->send();
             return true;
@@ -169,20 +170,27 @@ class ApplyOfferController extends Controller
      */
     protected function sendMailToCandidate($user, $offer)
     {
-        // Construction du sujet de l'e-mail.
+
+        // --- LOG ---
+        Log::info("Tentative d'envoi au candidat : " . $user->email);
+        // ----------------------
+
         $subject = "✅ Confirmation : Votre candidature à l'offre {$offer->title}";
-        // Construction du corps du message en HTML.
         $body = "
-            Bonjour {$user->prenom},<br><br>
-            Nous vous confirmons la réception de votre candidature pour l'offre suivante :<br><br>
-            <strong>Titre de l'offre :</strong> {$offer->title}<br>
-            <strong>Société :</strong> {$offer->company->name}<br>
-            <strong>Date de candidature :</strong> " . now()->format('d/m/Y H:i') . "<br><br>
-            Votre dossier est en cours d'examen. Vous serez contacté(e) directement par l'entreprise si votre profil est retenu.<br>
-            Cordialement,<br>L'équipe Portal Job.
+        Bonjour {$user->prenom},<br><br>
+        Nous vous confirmons la réception de votre candidature pour l'offre suivante :<br><br>
+        <strong>Titre de l'offre :</strong> {$offer->title}<br>
+        <strong>Société :</strong> {$offer->company->name}<br>
+        <strong>Date de candidature :</strong> " . now()->format('d/m/Y H:i') . "<br><br>
+        Votre dossier est en cours d'examen. Vous serez contacté(e) directement par l'entreprise si votre profil est retenu.<br>
+        Cordialement,<br>L'équipe Portal Job.
         ";
-        // Appel de la méthode d'envoi SMTP.
-        $this->sendSmtpMail($user->email, $subject, $body);
+
+        $result = $this->sendSmtpMail($user->email, $subject, $body);
+
+        Log::info("Mail candidat envoyé ? " . ($result ? 'OUI' : 'NON'));
+
+        return $result;
     }
 
     /**
@@ -190,24 +198,28 @@ class ApplyOfferController extends Controller
      */
     protected function sendMailToCompany($user, $offer, $company)
     {
-        // Récupération de l'e-mail de contact de l'entreprise.
         $companyEmail = $company->email_company;
 
-        // Construction du sujet de l'e-mail.
+        // --- LOG ---
+        Log::info("Tentative d'envoi à l'entreprise : " . $companyEmail);
+        // ----------------------
+
         $subject = "🔔 Nouvelle candidature pour l'offre : {$offer->title}";
-        // Construction du corps du message en HTML.
         $body = "
-            Cher recruteur,<br><br>
-            Un nouveau candidat a postulé à votre offre d'emploi :<br><br>
-            <strong>Offre :</strong> {$offer->title}<br>
-            <strong>Nom du candidat :</strong> {$user->prenom} {$user->nom}<br>
-            <strong>Email du candidat :</strong> {$user->email}<br>
-            <strong>Téléphone :</strong> {$user->telephone}<br><br>
-            <strong>CV :</strong> {$user->cv_pdf}<br><br>
-            Cordialement,<br>L'équipe Portal Job.
+        Cher recruteur,<br><br>
+        Un nouveau candidat a postulé :<br><br>
+        <strong>Offre :</strong> {$offer->title}<br>
+        <strong>Nom :</strong> {$user->prenom} {$user->nom}<br>
+        <strong>Email :</strong> {$user->email}<br>
+        <strong>Téléphone :</strong> {$user->telephone}<br><br>
+        Cordialement,<br>L'équipe Portal Job.
         ";
-        // Appel de la méthode d'envoi SMTP.
-        $this->sendSmtpMail($companyEmail, $subject, $body);
+
+        $result = $this->sendSmtpMail($companyEmail, $subject, $body);
+
+        Log::info("Mail entreprise envoyé ? " . ($result ? 'OUI' : 'NON'));
+
+        return $result;
     }
 }
 

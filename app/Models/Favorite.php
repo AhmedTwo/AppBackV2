@@ -8,23 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Favorite extends Model
 {
     use HasFactory;
+
     protected $table = 'favoris';
 
     protected $fillable = [
-        'id',
         'user_id',
         'offer_id',
-        'created_at',
-        'updated_at',
     ];
 
-    public function users()
+    public function user()
     {
-        return $this->belongsTo(\App\Models\Favorite::class, 'user_id'); // sert a communiquer via les clefs etrangere 
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function job_offers()
+    public function offer()
     {
-        return $this->hasMany(\App\Models\Favorite::class, 'offer_id');
+        return $this->belongsTo(Offer::class, 'offer_id');
     }
 }

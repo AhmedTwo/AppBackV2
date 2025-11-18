@@ -8,21 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Request extends Model
 {
     use HasFactory;
+
     protected $table = 'requests';
 
     protected $fillable = [
-        'id',
         'title',
         'description',
         'type',
         'status',
-        'created_at',
-        'updated_at',
         'user_id',
     ];
 
-    public function users()
+    public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'users_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

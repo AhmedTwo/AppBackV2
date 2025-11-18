@@ -8,12 +8,11 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Model
 {
-    use HasFactory;
-    use HasApiTokens;
+    use HasFactory, HasApiTokens;
+
     protected $table = 'users';
 
     protected $fillable = [
-        'id',
         'nom',
         'prenom',
         'email',
@@ -27,26 +26,14 @@ class User extends Model
         'preference',
         'disponibilite',
         'photo',
-        'created_at',
-        'updated_at',
-        'company_id'
+        'company_id',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -55,18 +42,21 @@ class User extends Model
         ];
     }
 
+    // Un user peut faire plusieurs demandes
     public function requests()
     {
-        return $this->hasMany(\App\Models\Request::class, 'users_id');
+        return $this->hasMany(Request::class, 'user_id');
     }
 
-    public function companys()
+    // Un user peut appartenir à une compagnie
+    public function company()
     {
-        return $this->hasMany(\App\Models\Company::class, 'id');
+        return $this->belongsTo(Company::class, 'company_id');
     }
 
-    public function getRole(): string
+    // Pour les apply
+    public function applies()
     {
-        return $this->role;
+        return $this->hasMany(Apply::class, 'user_id');
     }
 }

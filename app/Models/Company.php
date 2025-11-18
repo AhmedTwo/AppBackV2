@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     use HasFactory;
+
     protected $table = 'companys';
 
     protected $fillable = [
-        'id',
         'name',
         'logo',
         'number_of_employees',
@@ -23,7 +23,15 @@ class Company extends Model
         'email_company',
         'n_siret',
         'status',
-        'created_at',
-        'updated_at',
     ];
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class, 'id_company');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'company_id');
+    }
 }
