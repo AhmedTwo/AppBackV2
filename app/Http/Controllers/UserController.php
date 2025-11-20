@@ -160,10 +160,10 @@ class UserController extends Controller
             'qualification' => 'nullable|string|max:255',
             'preference' => 'nullable|string|max:255',
             'disponibilite' => 'nullable|in:0,1',
+            'photo' => 'nullable|image|max:2048',
             // 'nullable' : La photo est optionnelle
             // 'image' : Assure que c'est un fichier image valide (jpg, png, gif, svg, webp)
             // 'max:2048' : Taille maximale de 2 Mo (2048 kilobytes)
-            'photo' => 'nullable|image|max:2048',
             'cv_pdf' => 'nullable|file|mimes:pdf|max:10240', // 10Mo max pour le PDF
             'company_id' => 'nullable|integer|exists:companys,id',
         ], [
